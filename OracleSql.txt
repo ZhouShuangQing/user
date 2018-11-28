@@ -1,0 +1,808 @@
+--创建用户   设置密码   设置权限
+create user c##root IDENTIFIED by root;
+grant CONNECT ,RESOURCE to c##root;
+
+--查看当前用户的表
+select * from tab;
+
+--查看用户和所属表空间（如查询scott用户的所属表空间）：
+select username,default_tablespace from dba_users  where username='SCOTT';--用户名需要大写
+
+--开启打印功能
+set SERVEROUTPUT ON;
+
+--删除表结构（表中数据全部被删除）
+drop table grade;
+
+create table student
+(sno VARCHAR(3) not null,
+sname VARCHAR(10) not null,
+sex VARCHAR(10) not null,
+sbirthday date,
+class NUMBER not null
+);
+
+
+INSERT INTO student(sno,sname,sex,sbirthday,class) VALUES (108 ,'曾华' ,'男',to_date('1977-09-01','yyyy/mm/dd'),95033);
+INSERT INTO STUDENT (SNO,SNAME,SEX,SBIRTHDAY,CLASS) VALUES (105 ,'匡明' ,'男' ,to_date('1975-10-02','yyyy-mm-dd'),95031);
+INSERT INTO STUDENT (SNO,SNAME,SEX,SBIRTHDAY,CLASS) VALUES (107 ,'王丽' ,'女' ,to_date('1976-01-23','yyyy-mm-dd'),95033);
+INSERT INTO STUDENT (SNO,SNAME,SEX,SBIRTHDAY,CLASS) VALUES (101 ,'李军' ,'男' ,to_date('1976-02-20','yyyy-mm-dd'),95033);
+INSERT INTO STUDENT (SNO,SNAME,SEX,SBIRTHDAY,CLASS) VALUES (109 ,'王芳' ,'女' ,to_date('1975-02-10','yyyy-mm-dd'),95031);
+INSERT INTO STUDENT (SNO,SNAME,SEX,SBIRTHDAY,CLASS) VALUES (103 ,'陆君' ,'男' ,to_date('1974-06-03','yyyy-mm-dd'),95031);
+
+desc student;
+
+create table course(
+cno VARCHAR(5) not NULL,
+cname VARCHAR(10) not null,
+tno VARCHAR(10) not null
+);
+
+ -- 修改数据类型
+alter table course modify (cName varchar(20));
+
+
+INSERT INTO COURSE VALUES ('3-105' ,'计算机导论',825);
+INSERT INTO COURSE(CNO,CNAME,TNO)VALUES ('3-245' ,'操作系统' ,804);
+INSERT INTO COURSE(CNO,CNAME,TNO)VALUES ('6-166' ,'数据电路' ,856);
+INSERT INTO COURSE(CNO,CNAME,TNO)VALUES ('9-888' ,'高等数学' ,100);
+
+create table score
+(sno VARCHAR(3) not NULL,
+cno VARCHAR(5) not null,
+degree NUMBER not NULL
+);
+
+INSERT INTO SCORE(SNO,CNO,DEGREE)VALUES (103,'3-245',86);
+INSERT INTO SCORE(SNO,CNO,DEGREE)VALUES (105,'3-245',75);
+INSERT INTO SCORE(SNO,CNO,DEGREE)VALUES (109,'3-245',68);
+INSERT INTO SCORE(SNO,CNO,DEGREE)VALUES (103,'3-105',92);
+INSERT INTO SCORE(SNO,CNO,DEGREE)VALUES (105,'3-105',88);
+INSERT INTO SCORE(SNO,CNO,DEGREE)VALUES (109,'3-105',76);
+INSERT INTO SCORE(SNO,CNO,DEGREE)VALUES (101,'3-105',64);
+INSERT INTO SCORE(SNO,CNO,DEGREE)VALUES (107,'3-105',91);
+INSERT INTO SCORE(SNO,CNO,DEGREE)VALUES (108,'3-105',78);
+INSERT INTO SCORE(SNO,CNO,DEGREE)VALUES (101,'6-166',85);
+INSERT INTO SCORE(SNO,CNO,DEGREE)VALUES (107,'6-106',79);
+INSERT INTO SCORE(SNO,CNO,DEGREE)VALUES (108,'6-166',81);
+
+
+CREATE table thacher
+(
+tno VARCHAR(3) not NULL,
+tname VARCHAR(10) not null,
+tsex VARCHAR(4) not null,
+tbirthday date NOT null,
+prof VARCHAR(6),
+depart VARCHAR(10) not null
+);
+
+ -- 修改数据类型
+alter table thacher modify (depart varchar(20));
+alter table thacher modify (prof varchar(12));
+
+--修改表名
+ALTER TABLE THACHER RENAME TO TEACHER;
+
+INSERT INTO TEACHER(TNO,TNAME,TSEX,TBIRTHDAY,PROF,DEPART) VALUES (804,'李诚','男',to_date('1958-12-02','yyyy-mm-dd'),'副教授','计算机系');
+INSERT INTO TEACHER(TNO,TNAME,TSEX,TBIRTHDAY,PROF,DEPART) VALUES (856,'张旭','男',to_date('1969-03-12','yyyy-mm-dd'),'讲师','电子工程系');
+INSERT INTO TEACHER(TNO,TNAME,TSEX,TBIRTHDAY,PROF,DEPART) VALUES (825,'王萍','女',to_date('1972-05-05','yyyy-mm-dd'),'助教','计算机系');
+INSERT INTO TEACHER(TNO,TNAME,TSEX,TBIRTHDAY,PROF,DEPART) VALUES (831,'刘冰','女',to_date('1977-08-14','yyyy-mm-dd'),'助教','电子工程系');
+
+
+--获取字符长度
+select length(t.tname), t.tsex,t.tbirthday from teacher t;
+--拼接字符串
+select concat(t.tname, t.tsex),t.tbirthday from teacher t;
+--大小写切换，upper();lower();
+--trim()  取出字符串前后空格
+--substr()  截取字符串 （字符串，开始截取位数，截取个数）
+select substr(concat(t.tname, t.tsex),1,2),t.tbirthday from teacher t;
+--replace();替换
+
+
+
+
+--round()四舍五入,2 表示保留2位小数
+select round(avg(sc.degree),2) from score sc, student s where s.sno = sc.sno and s.class = '95033';
+--ceil() 向上取整
+select ceil(avg(sc.degree)) from score sc, student s where s.sno = sc.sno and s.class = '95033';
+--floor()向下取整
+select floor(avg(sc.degree)) from score sc, student s where s.sno = sc.sno and s.class = '95033';
+--truncate()截取
+select truncate(avg(sc.degree),2) from score sc, student s where s.sno = sc.sno and s.class = '95033';--(无法截取)
+
+
+
+--1、查询Student表中的所有记录的Sname、Ssex和Class列。
+select sname,sex,class from student;
+
+--2、查询教师所有的单位即不重复的Depart列。
+select t.depart from teacher t  group by t.depart;
+select distinct t.depart from teacher t;
+
+--3、查询Student表的所有记录。
+select * from student;
+
+--4、查询Score表中成绩在60到80之间的所有记录。
+select * from score where degree between 60 and 80 ;
+select * from score where degree >=60 and degree <=80 ;
+
+--5、查询Score表中成绩为85，86或88的记录。
+select * from score where degree in (85,86,88) ;
+
+--6、查询Student表中“95031”班或性别为“女”的同学记录。
+select * from student where class='95031' or sex ='女';
+
+--7、以Class降序查询Student表的所有记录。
+select * from student Order by class desc;
+
+--8、以Cno升序、Degree降序查询Score表的所有记录。
+select * from score Order by cno asc,degree desc;
+
+--9、查询“95031”班的学生人数。
+select count(*) from student where class='95031';
+
+--10、查询Score表中的最高分的学生学号和课程号。
+select s.sno,s.cno from score s group by s.sno,s.cno having s.degree = max(s.degree);--(疑问为什么不能完成查询)
+select s.sno,s.cno from score s where s.degree = all(select max(degree) from score);  
+
+--11、查询‘3-105’号课程的平均分。
+select avg(degree) from score where cno = '3-105';
+select cno,avg(degree) from score where cno = '3-105' group by cno;
+
+--12、查询Score表中至少有5名学生选修的并以3开头的课程的平均分数。
+select avg(degree) from score where cno like '3%' group by cno having count(cno)>=5; 
+
+--13、查询最低分大于70，最高分小于90的Sno列。
+select s.sno,s.degree from score s where s.degree between 70 and 90 ;
+
+--14、查询所有学生的Sname、Cno和Degree列。
+select s.sname,e.cno,e.degree from student s,score e where s.sno=e.sno;
+
+--15、查询所有学生的Sno、Cname和Degree列。
+select s.sno,c.cname,e.degree from student s,course c,score e where s.sno=e.sno and c.cno=e.cno;
+
+--16、查询所有学生的Sname、Cname和Degree列。
+select s.sname,c.cname,e.degree from student s,course c,score e where s.sno=e.sno and c.cno=e.cno;
+
+--17、查询“95033”班所选课程的平均分。
+select avg(sc.degree) from score sc, student s where s.sno = sc.sno and s.class = '95033';
+--round()四舍五入,2 表示保留2位小数
+select round(avg(sc.degree),2) from score sc, student s where s.sno = sc.sno and s.class = '95033';
+--ceil() 向上取整
+select ceil(avg(sc.degree)) from score sc, student s where s.sno = sc.sno and s.class = '95033';
+--floor()向下取整
+select floor(avg(sc.degree)) from score sc, student s where s.sno = sc.sno and s.class = '95033';
+--truncate()截取
+select truncate(avg(sc.degree),2) from score sc, student s where s.sno = sc.sno and s.class = '95033';--(无法截取)
+
+--18、命令建立了一个grade表：
+create table grade
+(low number,upp number,rank char(1));
+insert into grade values(90,100,'A');
+insert into grade values(80,89,'B');
+insert into grade values(70,79,'C');
+insert into grade values(60,69,'D');
+insert into grade values(0,59,'E');
+commit;
+
+--19、查询选修“3-105”课程的成绩高于“109”号同学成绩的所有同学的记录
+select * from score s where degree > all(select degree from score s where s.cno = '3-105' and s.sno = '109') and s.cno = '3-105';
+
+--20、查询score中选学一门以上课程的同学中分数为非最高分成绩的记录。
+select * from Score a where Degree <(select MAX(degree) from Score b where a.Cno=b.Cno) and Sno in(select Sno from Score group by Sno having count(*)>1);
+
+--21、查询成绩高于学号为“109”、课程号为“3-105”的成绩的所有记录。
+select * from score e where e.cno='3-105' and e.degree > all(select e.degree from score e where e.cno ='3-105' and e.sno=109);
+
+--22、查询和学号为108的同学同年出生的所有学生的Sno、Sname和Sbirthday列。
+select s.*,s.sno,s.sname,s.sbirthday from student s where s.sbirthday=(select s.sbirthday from student s where s.sno=108);
+
+SELECT * FROM STUDENT S WHERE TO_CHAR(S.SBIRTHDAY, 'yyyy') = (SELECT TO_CHAR(S1.SBIRTHDAY, 'yyyy') FROM STUDENT S1 WHERE S1.SNO = '108');
+
+--23、查询“张旭“教师任课的学生成绩。
+select t.tname,e.degree  学生成绩,e.sno from teacher t,score e,course c where t.tno=c.tno and c.cno=e.cno and t.tname='张旭';
+
+--24、查询选修某课程的同学人数多于5人的教师姓名
+select T.TNAME,count(c.cno) as 人数 from teacher t ,course c,SCORE SC where t.tno = c.tno and SC.CNO = C.CNO  group by T.TNAME having count(c.cno)>5;
+
+--25、查询95033班和95031班全体学生的记录。
+select * from student where class in('95033','95031');
+
+--26、查询存在有85分以上成绩的课程Cno.
+select cno from score where degree>85;
+
+--27、查询出“计算机系“教师所教课程的成绩表。
+select t.tname,c.cname,s.degree from teacher t left join course c on c.tno=t.tno left join score s on c.cno=s.cno where t.depart='计算机系';
+
+select t.tname, count(t.tname) from teacher t, course c,score s where c.tno=t.tno and  c.cno=s.cno and t.depart='计算机系' group by t.tname ;
+
+--28、查询“计算机系”与“电子工程系“不同职称的教师的Tname和Prof。
+select t.depart,t.tname,t.prof from teacher t group by t.depart,t.tname,t.prof having count(t.prof) = 1 order by t.depart ;
+
+--29、查询选修编号为“3-105“且成绩至少高于选修编号为“3-245”的同学的Cno、Sno和Degree,并按Degree从高到低次序排序。
+select Cno,Sno,Degree from score where cno='3-105' and  degree > all(select degree from score where cno = '3-245');
+
+--30、查询选修编号为“3-105”且成绩高于选修编号为“3-245”的同学的Cno、Sno和Degree.
+select Cno,Sno,Degree from score where cno='3-105' and  degree > all(select degree from score where cno = '3-245');
+
+--31、查询所有教师和同学的name、sex和birthday.   union all联合查询
+select t.tname, t.tsex,t.tbirthday from teacher t  union all select s.sname,s.sex,s.sbirthday from student s;
+
+
+--32、查询所有“女”教师和“女”同学的name、sex和birthday.
+SELECT * FROM (SELECT T.TNAME, T.TSEX, T.TBIRTHDAY FROM TEACHER T 
+        UNION ALL
+        SELECT S.SNAME, S.SEX, S.SBIRTHDAY FROM STUDENT S) R WHERE R.TSEX = '女';
+
+--33、查询成绩比该课程平均成绩低的同学的成绩表。
+SELECT * FROM SCORE SC1,(SELECT SC.CNO, AVG(SC.DEGREE) pjf FROM SCORE SC GROUP BY SC.CNO) R
+ WHERE SC1.CNO = R.CNO AND SC1.DEGREE < R.pjf;
+
+--34、查询所有任课教师的Tname和Depart.
+SELECT t.tname, t.depart FROM teacher t;
+
+--35、查询所有未讲课的教师的Tname和Depart.
+SELECT * FROM TEACHER T WHERE T.TNO NOT IN
+(SELECT C.TNO FROM COURSE C WHERE C.CNO IN (SELECT SC.CNO FROM SCORE SC));
+
+--36、查询至少有2名男生的班号。
+SELECT s.class FROM student s GROUP BY s.class having count(sname)>1;
+
+select round(avg(degree),2),sno,cno from score group by cno,sno;
+
+select distinct sno,cno from score group by cno,sno;
+
+--37、查询Student表中不姓“王”的同学记录。
+select * from student s where s.sname not like '王%';
+
+--38、查询Student表中每个学生的姓名和年龄。
+SELECT s.sname, ROUND((SYSDATE-s.sbirthday)/365) 年龄 FROM student s;
+SELECT s.sname, TO_CHAR(SYSDATE,'yyyy')-TO_CHAR(s.sbirthday,'yyyy') 年龄 FROM student s;
+SELECT sname, ROUND(SYSDATE) FROM student;
+
+
+--39、查询Student表中最大和最小的Sbirthday日期值。
+select min(s.sbirthday) as 最小,max(s.sbirthday) as 最大 from student s;
+
+--40、以班号和年龄从大到小的顺序查询Student表中的全部记录。
+select * from student s order by s.class desc, s.sbirthday desc;
+
+SELECT * FROM student s ORDER BY s.class DESC, s.sbirthday;
+
+--41、查询“男”教师及其所上的课程。
+SELECT c.cname, t.tsex,t.tname FROM teacher t,course c where t.tno=c.tno and t.tsex='男';
+
+--42、查询最高分同学的Sno、Cno和Degree列。
+SELECT S.SNO, SC.CNO, SC.DEGREE FROM STUDENT S, SCORE SC WHERE S.SNO = SC.SNO AND SC.DEGREE = (SELECT MAX(DEGREE) FROM SCORE);
+
+select S.SNO, S.CNO, S.DEGREE from score s where S.DEGREE =(select max(s.degree) from score s);
+
+select S.SNO, S.CNO, max(S.DEGREE) from score s group by s.cno,s.sno;
+
+--43、查询和“李军”同性别的所有同学的Sname.
+SELECT * FROM STUDENT S WHERe S.SEX =(SELECT sex FROM STUDENT where sname='李军');
+
+
+--44、查询和“李军”同性别并同班的同学Sname.
+select s.sname from STUDENT S WHERe s.class=(SELECT class FROM STUDENT where sname='李军') and  S.SEX =(SELECT sex FROM STUDENT where sname='李军');
+
+--45、查询所有选修“计算机导论”课程的“男”同学的成绩表
+select distinct e.degree,s.*,c.cname from student s,course c,score e where s.sno=e.sno and e.cno=c.cno and c.cname = '计算机导论' and s.sex='男';
+
+select distinct e.degree,s.sno,c.cname,s.sex from student s left join score e on  s.sno=e.sno left join course c on e.cno=c.cno 
+where c.cname = '计算机导论' and s.sex='男';
+
+--分页 取得分数最高的第3到第5名学
+select * from (select a.*,rownum r from (select * from score order by degree DESC) a) where r>=3 and r<=6;
+--分页 <  !=   <=
+SELECT rownum, s.sname, TO_CHAR(SYSDATE,'yyyy')-TO_CHAR(s.sbirthday,'yyyy') 年龄 FROM student s where rownum between 1 and 3;
+
+
+
+
+
+/*
+修改
+--单表
+update  表名 set 字段1= 值1，字段2= 值2，......
+where 筛选条件
+
+--多表
+update 表1 别名1，表2 别名2 set 字段1= 值1，.... 
+where 连接条件 and 筛选条件
+
+update 表1 别名1 join 表2 别名2 
+on 连接条件
+set 字段1= 值1，.... 
+where 筛选条件
+
+*/
+
+
+
+/*
+删除
+--单表
+delete from 表名 where 筛选条件
+
+--多表
+delete 表1 别名1，表2 别名2 from 表1 别名1，表2 别名2
+where 连接条件 and 筛选条件
+
+delete 表1 别名1，表2 别名2 from 表1 别名1 join 表2 别名2
+on 连接条件
+where 筛选条件
+
+truncate table 表名；
+*/
+
+
+
+/*
+注意:1.涉及到10%这种带有百分号的运算时一定要转换成相应的数字,例如:0.1
+     2.in 表示是何种参数,为默认值,可省略
+　　 3.&符号的使用,输入时如果是字符串不要忘记' ',输完不要多加分号
+   注意:用 || 连接字符串,以及使用 ' '表示字符串
+*/ 
+    
+    
+--创建存储过程或函数实现传入num1和num2，插入到 math 表中
+CREATE or replace procedure p_wjdak(mno IN  math.mno%type, num1 IN number,num2 IN  number)
+is
+BEGIN
+    INSERT INTO math(mno,num1,num2) VALUES (mno,num1,num2);
+END p_wjdak;
+
+--调用存储过程
+--（一）
+call p_wjdak('1-05','123','10.23');
+--(二)
+begin
+  p_wjdak('1-06','13','1.23');
+end;
+
+
+
+
+create or REPLACE procedure pro(names in math.mno%type)
+is
+pas varchar(20);
+begin
+    select count(*) into pas from math where mno = names;
+    dbms_output.put_line('数据有----'||pas||'----条');
+end;
+
+begin
+    pro ('1-05');
+end;
+
+call pro('1-01');
+
+
+
+
+--使用存储过程实现在为math删除一条记录是，先返回要删除的num1，如果存在删除成功，如果不存在，抛出异常，显示未找到数据。
+create or replace procedure pro1 (mn in math.mno%type,nu out math.num1%type)
+is
+--将查询到的mnu1值赋给输出参数nu
+begin
+    select num1 into nu from math where mno=mn group by num1;
+    delete  from math  where mno = mn;
+--异常处理
+--未查询相关的mno数据时抛出异常
+exception
+    when no_data_found then nu:='未找到数据';
+end;
+
+ select num1  from math where mno='1-06' group by num1;
+
+DECLARE
+var3 varchar2(20);
+begin 
+    pro1('1-07',var3);
+end;
+
+
+
+
+
+--创建一个存储过程，以数字号为参数，输出该num2
+create or replace procedure mathtt(mno1 in math.mno%type, nu out math.num2%type)
+is
+begin
+ select num2 into nu from math where mno =mno1;
+end;
+
+DECLARE
+var3 number;
+begin 
+    mathtt('1-01',var3);
+end;
+
+
+
+
+
+--定义测试in模式的存储过程
+CREATE OR REPLACE PROCEDURE pro2(p1 IN number,p2 IN number)--参数的个数、类型可以自定义，但是参数不允许指定长度
+AS
+BEGIN
+  --println(p1);
+  dbms_output.put_line(p1);
+  dbms_output.put_line(p2);
+  --p2:=11; --in模式参数不能为其赋值
+END;
+
+--通过语句块调用存储过程
+BEGIN
+  pro2(10,100);
+END;
+
+call pro2(10,100);
+
+
+--测试out模式的存储过程
+CREATE OR REPLACE PROCEDURE pro3(p3 OUT number )
+AS
+BEGIN
+    --p3会忽略传入的值
+    dbms_output.put_line(p3);
+    p3:=33;--设定存储过程调用后的值
+END;
+
+DECLARE
+var3 number :=30;--声明一个变量用于设定存储过程调用前的值
+BEGIN
+dbms_output.put_line('存储过程调用前的值：'||var3);
+--调用pro存储过程重新赋值；调用过程，如果过程形参是out模式，必须采用变量实参
+pro3(var3);
+dbms_output.put_line('存储过程调用前的值：'||var3);
+END;
+
+
+
+--测试in out模式的存储过程
+CREATE OR REPLACE PROCEDURE pro4(p4 IN OUT number)
+AS
+BEGIN
+  dbms_output.put_line(p4);
+  p4:=44;--in out模式参数的值可以修改
+END;
+
+DECLARE
+age number :=40;--声明一个变量用于设定存储过程调用前的值
+BEGIN
+dbms_output.put_line('存储过程调用前的值：'||age);
+pro4(age);--调用pro存储过程重新赋值
+dbms_output.put_line('存储过程调用后的值：'||age);
+END;
+
+
+
+
+--函数
+ --定义入参数[参数名 in 参数类型]
+ create or replace function 函数名(参数名 参数模式 参数类型) 
+	  return   返回类型 
+is
+      变量 变量类型
+begin
+    函数体
+  return 值;
+exception
+  when others then
+  return null;
+end 函数名;
+
+
+
+
+--函数
+--定义入参数[参数名 in 参数类型]
+ create or replace function gettype(mid in varchar(10)) 
+       --定义返回类型
+	  return   number 
+is
+       shu number;
+       shuu number;
+       hehe number;
+begin
+  --查出
+  select num1 into shu from math 
+  where mno = mid;
+  --查出
+  select num2 into shuu from math 
+  where mno = mid;
+  --返回字符串 
+  hehe := shu+shuu;
+  return hehe;
+exception
+  when others then
+  return null;
+end gettype;
+
+
+
+select num1+num2 as hehe,num1-num2 as cha,num1*num2 as ji,num1/num2 as shang,mod(num1,num2) as yu from math;
+
+
+
+
+--定义入参数[参数名 in 参数类型]
+create or replace function gettype(midd in varchar2(10)) return number 
+is
+    hehe number;
+begin
+    select num1+num2 into hehe from math
+    where mno = midd;
+    return hehe;
+end gettype;
+
+declare 
+    hehe number;
+begin
+    hehe := gettype('1-07');
+    dbms_output.put_line('和为=' || hehe);
+end;
+
+
+/*
+定义游标
+CURSOR  <游标名称>  IS  <select语句> ；    
+
+打开游标 
+OPEN <游标名称> ；
+
+取出使用游标 
+FETCH <游标名称> INTO 变量1，变量2…..变量n; 
+或者 
+FETCH <游标名称> INTO 行对象；
+
+关闭游标 
+CLOSE <游标名称>;
+
+--------------------- 
+--常用属性
+%NOTFOUND 
+如果取出游标失败，也就是FETCH 语句失败，则该属性是 true，否则为 false
+
+%FOUND 
+如果取出游标成功，也就是FETCH语句成功，该属性为 true，否则为 false
+
+ROWCOUNT 
+返回游标当前行的行数
+
+ISOPEN 
+如果游标是开着的，则返回 true ，否则返回false
+*/
+
+--游标
+
+declare
+--定义游标 ，将 math表中的 mno,num1,num2放入游标中
+cursor mm is SELECT * from math;
+ms math.mno%TYPE;
+num1 math.num1%TYPE;
+num2 math.num2%TYPE;
+BEGIN
+--打开游标
+open mm; 
+LOOP
+--取出游标
+fetch mm into ms,num1,num2;
+if mm%FOUND THEN 
+dbms_output.put_line('我的mno 是' || ms || ',数学1号是' || num1 || ',数学2号是' || num2);
+END IF;
+EXIT WHEN mm%NOTFOUND;  --当游标找不到时，退出循环
+END LOOP;
+END; 
+
+------------------------------------------------------------------------
+
+declare
+    --给游标设定参数，部门mno,注意，一定要where mno = mid
+    CURSOR mmm(mid math.mno%TYPE) IS SELECT * FROM math WHERE mno = mid;
+    --在定义 行对象 的时候，可以将类型定义成游标的类型
+    --在取 行对象 中每个字段的时候，可以 行对象.字段名 ，具体看下面输出
+    hdx mmm%ROWTYPE; 
+BEGIN
+    --打开游标的时候，给参数赋值，指定部门编号是 1-07
+    OPEN mmm('1-07');--放入参数
+    FETCH mmm INTO hdx;
+    WHILE mmm%FOUND
+      LOOP
+      --取出行对象的每个字段，可以  行对象.字段  ，该字段是表中的真实字段名
+        dbms_output.put_line('我的mno 是' || hdx.mno || ',数学1号是' || hdx.num1 || ',数学2号是' || hdx.num2);
+        --在LOOP循环中，取出游标，并移动到下一个位置
+        FETCH mmm INTO hdx;
+      END LOOP;
+     CLOSE mmm;
+END;
+
+-------------------------------------------------------------------
+--创建过程，参数为sys_refcursor，为out型   语法
+create or replace procedure 存储过程(游标名称 out sys_refcursor) is
+begin
+  open 游标名称 for select * from 表名 （where。。。。）;
+end;
+
+
+
+create or replace procedure get_inp_info_pro0(
+                        pid_no   in varchar2, --输入病人ID号或结算收据号
+                         id_or_no in number, --1 ID号，2收据号
+                         p_bc     out SYS_REFCURSOR --游标做输出参数
+                         )
+as begin 
+    if id_or_no=1 then 
+    open p_bc for select rcpt_no,patient_id,pat_name from info where patient_id=pid_no;
+    else if id_or_no=2 then 
+    open p_bc for select rcpt_no,patient_id,pat_name from info where RCPT_NO=pid_no;
+    else 
+    open p_bc for select rcpt_no,patient_id,pat_name from info where RCPT_NO='0';
+    end if;
+end;
+
+
+
+
+
+create or replace procedure get_inp_info_pro(
+                        pid_no   in varchar2, --输入病人ID号或结算收据号
+                         id_or_no in number, --1 ID号，2收据号
+                         p_bc     out SYS_REFCURSOR --游标做输出参数
+                         )
+as begin 
+    if id_or_no=1 then 
+    open p_bc for select * from info where patient_id=pid_no;
+    else if id_or_no=2 then 
+    open p_bc for select * from info where RCPT_NO=pid_no;
+    else 
+    open p_bc for select * from info where RCPT_NO='0';
+    end if;
+end;
+select * from info where patient_id='123';
+select * from info where RCPT_NO='123458';
+declare 
+get_info SYS_REFCURSOR;
+rcptId info.rcpt_no%type;
+patientId info.patient_id%type;
+patName info.pat_name%type;
+begin
+    get_inp_info_pro0('123458',2,get_info);
+    loop 
+    fetch get_info into rcptId,patientId,patName;
+    if get_info%found then
+     dbms_output.put_line('结算收据号='||rcptId||',病人编号='||patientId||',病人姓名='||patName);
+    end if;
+    exit when get_info%notfound;
+    end loop;
+end;
+
+
+
+
+--数据备份与恢复
+
+-- log=C:/Users/周双庆/Desktop/aa.log 打印日志文件
+--statistics=none  表示统计信息
+exp C##ROOT/root file=C:/Users/周双庆/Desktop/aa.dmp  log=C:/Users/周双庆/Desktop/aa.log statistics=none tables=(student,math)
+
+imp C##ROOT/root file=C:/Users/周双庆/Desktop/aa.dmp statistics=none tables=(student)
+
+exp C##ROOT/root file=C:/Users/周双庆/Desktop/grade.dmp statistics=none tables=(grade)
+
+imp C##ROOT/root file=C:/Users/周双庆/Desktop/grade.dmp statistics=none tables=(math)
+
+
+drop table math;
+
+/*
+【用 exp 数 据 导 出】：
+    @。。。。后面的看情况设置
+1 将数据库TEST完全导出,用户名system 密码manager 导出到D:\daochu.dmp中
+   exp system/manager@TEST file=d:\daochu.dmp full=y
+
+2 将数据库中system用户与sys用户的表导出
+   exp system/manager@TEST file=d:\daochu.dmp owner=(system,sys)
+
+3 将数据库中的表table1 、table2导出
+   exp system/manager@TEST file=d:\daochu.dmp tables=(table1,table2)
+
+4 将数据库中的表table1中的字段filed1以”00″打头的数据导出
+   exp system/manager@TEST file=d:\daochu.dmp tables=(table1) query=\” where filed1like &apos;00%&apos;\”
+
+上面是常用的导出，对于压缩我不太在意，用winzip把dmp文件可以很好的压缩。不过在上面命令后面 加上 compress=y 就可以了。
+*/
+
+
+/*
+【用 imp 数 据 导 入】：
+
+1 将D:\daochu.dmp 中的数据导入 TEST数据库中。
+   imp system/manager@TEST   file=d:\daochu.dmp
+
+    上面可能有点问题，因为有的表已经存在，然后它就报错，对该表就不进行导入。
+    在后面加上 ignore=y 就可以了。
+
+2 将d:\daochu.dmp中的表table1 导入
+imp system/manager@TEST   file=d:\daochu.dmp   tables=(table1)
+*/
+
+
+--sign()函数比较大小
+--decode()函数用于流程控制
+--假设想给math加数字，其标准是：在123元以下的将加20％；工资在123元以上的加15％，123 的不加。实现：
+select decode(sign(num1-123),1,num1*1.15,-1,num1*1.2,num1) as 数字 from math;
+select * from math;
+update math set num1 = decode(sign(num1-123),1,num1*1.15,-1,num1*1.2,num1);
+
+
+--case when then else end 用法
+case 字段（或函数）
+    when 常量1（表达式1） then 值1；
+    when 常量2（表达式1） then 值2；
+                .
+                .
+    else 值N；
+    end；
+    
+    
+    
+    
+SELECT sname,
+       SUM( CASE sex
+            WHEN '男' THEN 1
+            ELSE 0 END) 男性人口,  --男性人口
+       SUM( CASE sex
+            WHEN '女' THEN 2
+            ELSE 0 END) 女性人口   --女性人口
+FROM  student
+GROUP BY sname;
+
+
+select * from math;
+update math set num2 = floor(num2);
+
+UPDATE math SET num2 = 
+    CASE WHEN num2 >= 5000 THEN num2 * 0.55
+         WHEN num2 >= 2000 AND num2 < 4600 THEN num2 * 1.15
+         WHEN num2 < 2000  THEN num2 * 2.15
+ELSE num2
+END;
+
+
+
+
+SELECT 
+CASE WHEN salary <= 500 THEN '1' 
+WHEN salary > 500 AND salary <= 600 THEN '2' 
+WHEN salary > 600 AND salary <= 800 THEN '3' 
+WHEN salary > 800 AND salary <= 1000 THEN '4' 
+ELSE NULL END salary_class, 
+COUNT(*) 
+FROM??? Table_A 
+GROUP BY 
+CASE WHEN salary <= 500 THEN '1' 
+WHEN salary > 500 AND salary <= 600 THEN '2' 
+WHEN salary > 600 AND salary <= 800 THEN '3' 
+WHEN salary > 800 AND salary <= 1000 THEN '4' 
+ELSE NULL END;
+
+
+
+
+
+select purchase.psort_Id,
+(case 
+        when quote_type = 'PC' or quote_type = 'TD' THEN  (select purchase_title from df_purchase_demand pd where pd.ps_id = quot.master_id rownum=1)
+       when quote_type = 'IV' then (select inventory_Title from df_inventory dv where dv.ivt_id = quot.master_id rownum=1)
+end) as item_title
+from df_quote quot left join df_purchase_demand purchase on quot.master_id = purchase.ps_id
+where 1 = 1 and quot.site_Id is not null
+order by quot.create_time desc
+
+
+
